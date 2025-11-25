@@ -7,6 +7,8 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <stdlib.h>
+
 
 typedef struct trellis{
     unsigned int cl; // constraint length (K value. eg: K = 7)
@@ -39,5 +41,19 @@ FEC init_fec(unsigned int cl, unsigned int msb, unsigned int lsb, unsigned int n
 /// @brief prints the configurations of the configured fec.
 /// @param _fec 
 void print_fec(FEC _fec);
+
+/// @brief prints the input array with 32 elements per line.
+/// @param  
+/// @param  
+/// @param  
+void print_array(uint8_t *, size_t , const char *);
+
+/// @brief encodes the binary data as specified by the FEC configuration.
+/// @param  
+/// @param  
+/// @param  
+/// @param  
+/// @return 
+size_t encode(FEC , uint8_t *, size_t , uint8_t *);
 
 #endif

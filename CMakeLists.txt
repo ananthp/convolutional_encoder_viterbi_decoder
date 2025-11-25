@@ -13,4 +13,4 @@ add_executable(fec_test fec_tests.c)
 
 target_link_libraries(fec_test PRIVATE fec_lib m)
 
-target_compile_options(fec_test PRIVATE -Wall -Wextra)
+target_compile_options(fec_test PRIVATE -Wall -Wextra -g)

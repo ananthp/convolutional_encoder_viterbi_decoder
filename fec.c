@@ -46,3 +46,13 @@ void print_fec(FEC _fec)
     }
     printf("]\n");
 }
+
+void print_array(uint8_t *a, size_t b, const char *c)
+{
+    printf("\n%s : (%d)\n", c, b);
+    for(int i = 0; i < b; i++){
+        if(i%32 == 0)
+        printf("\n");
+        printf("%d ", a[i]);
+    }
+}
