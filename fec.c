@@ -1,13 +1,5 @@
 #include "fec.h"
 
-// unsigned int trelis_structure[10][2] = {
-//     [7][0] = 0133, // K = 7, MSB
-//     [7][1] = 0171, // K = 7, LSB
-
-//     [9][0] = 0133, // k = 9, MSB
-//     [9][1] = 0171, // K = 9, LSB
-// };
-
 FEC init_fec(unsigned int cl, unsigned int msb, unsigned int lsb, unsigned int n_repeats, bool *punc_pat, size_t sz_punc_pat, bool enable_fulltail_biting)
 {
     FEC a;

@@ -2,7 +2,7 @@
 #include "colors.h"
 #include <time.h>
 
-#define MAX_MSG_SIZE 800000
+#define MAX_MSG_SIZE (8*1)
 
 uint8_t msg[MAX_MSG_SIZE] = {0};
 size_t sz_msg = MAX_MSG_SIZE;
@@ -26,12 +26,8 @@ int main()
 {
     srand(time(NULL)); // Seed with current time
 
-    bool punc[4] = {1,1,1,1};
-    size_t sz_punc = 4;
-
-    FEC _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, false);
-
-    print_fec(_fec);
+    bool punc[4] = {1,1};
+    size_t sz_punc = 2;
 
     for(size_t i = 0; i < sz_msg; i++)
     {
@@ -40,36 +36,60 @@ int main()
         // msg[i] = (bool)1;
     }
 
+
+    /******************************************* A FEC configuraion test ****************************************** */
+    FEC _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, false);
+    print_fec(_fec);
+
     // print_array(msg, sz_msg, "raw msg");
 
+    printf("\nraw msg size : %lld bits\n", sz_msg);
+
     sz_enc = encode(_fec, msg, sz_msg, enc);
+
+    // adding 1 error manually.
+    // enc[0] = !enc[0];
 
     // print_array(enc, sz_enc, "encoded data");
 
     sz_dec = decode(_fec, enc, sz_enc, dec);
+    printf("\ndecoded msg size : %lld bits\n", sz_dec);
 
     // print_array(dec, sz_dec, "decoded msg : ");
 
     validate_data(msg, sz_msg, dec, sz_dec);
 
     
-
+    /******************************************* A FEC configuraion test ****************************************** */
+    // _fec = init_fec(9, 0561, 0753, 0, punc, sz_punc, true);
+    _fec = init_fec(3, 05, 07, 0, punc, sz_punc, true);
     // _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, true);
-    _fec = init_fec(3, 05, 07, 0, punc, sz_punc, false);
 
     print_fec(_fec);
 
-    // print_array(msg, sz_msg, "raw msg");
+    print_array(msg, sz_msg, "raw msg");
 
+    printf("\nraw msg size : %lld bits\n", sz_msg);
+    sz_enc = 0;
     sz_enc = encode(_fec, msg, sz_msg, enc);
 
     // print_array(enc, sz_enc, "encoded data");
 
-    sz_dec = decode(_fec, enc, sz_enc, dec);
+    // adding 1 error manually.
+    // enc[0] = !enc[0];
+    // enc[sz_enc-1] = !enc[sz_enc-1];
+    // enc[sz_enc-2] = !enc[sz_enc-2];
+    enc[sz_enc-3] = !enc[sz_enc-3];
 
-    // print_array(dec, sz_dec, "decoded msg : ");
+    sz_dec = 0;
+    sz_dec = decode(_fec, enc, sz_enc, dec);
+    printf("\ndecoded msg size : %lld bits\n", sz_dec);
+
+    print_array(dec, sz_dec, "decoded msg : ");
 
     validate_data(msg, sz_msg, dec, sz_dec);
+
+    /******************************************* A FEC configuraion test ****************************************** */
 
 
     return 0;
@@ -83,17 +103,17 @@ int validate_data(uint8_t *input1, size_t sz_input1, uint8_t *input2, size_t sz_
 {
     if(sz_input1 != sz_input2)
     {
-        printf( REDB "\ngiven sizes are not equal\n" reset);
+        printf("\n" REDB "given sizes are not equal" reset "\n");
         return -1;
     }
     for(size_t i = 0; i < sz_input1; i++)
     {
         if(input1[i] != input2[i])
         {
-            printf( REDB "\ngiven two inputs are not equal\n" reset);
+            printf("\n" REDB "given two inputs are not equal" reset "\n");
             return 0;
         }
     }
-    printf( GRNB "\ngiven two inputs are matching..!\n" reset "\n");
+    printf("\n" GRNB "given two inputs are matching..!" reset "\n");
     return 1;
 }

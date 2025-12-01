@@ -60,10 +60,8 @@ size_t decode(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *dec_msg)
     unsigned int state_reg = 0;
     unsigned int no_of_states = pow(2,_fec.cl-1);
     unsigned int full_state = no_of_states - 1;
-    printf("\nfull state = %d\n", full_state);
 
     unsigned int inf =  INT_MAX;
-    // unsigned int inf =  100;
     unsigned int rows = no_of_states; // total no of states in the configured fec. (if cl=7, this will be 2^(7-6) = 2^6 = 64 states).
     unsigned int cols = sz_enc_msg/2 + 1; // needed one extra node column to represent the initial values for all the states.
 
@@ -93,15 +91,14 @@ size_t decode(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *dec_msg)
     uint8_t enc_msb = 0, enc_lsb = 0;
     unsigned int enc_msg_idx = 0;
 
-    printf("\ndecoder metrics table size : (%d,%d)\n", rows,cols);
+    // printf("\ndecoder metrics table size : (%d,%d)\n", rows,cols);
+    printf("\nsizeof branch metrics = %lld bytes\n", sizeof(metrics)*rows*cols);
     for(unsigned int j = 0; j < cols-1; j++)
-    // for(unsigned int i = 0; i < rows; i++)
     {
         enc_msb = enc_msg[enc_msg_idx++];
         enc_lsb = enc_msg[enc_msg_idx++];
      
         for(unsigned int i = 0; i < rows; i++)
-        // for(unsigned int j = 0; j < cols; j++)
         {
             unsigned int ones_cnt = 0;
             uint8_t G0 = 0, G1 = 0;
@@ -199,6 +196,8 @@ size_t decode(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *dec_msg)
         // printf("\n");
     }
 
+    // print_metrics(metrics, rows, cols);
+
     unsigned int min_distance = inf;
     unsigned int min_idx = 0;
     printf("\nlast stage metrics :");
@@ -221,6 +220,15 @@ size_t decode(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *dec_msg)
         min_idx = metrics[min_idx].prev_node_for_error_at_cur_node;
 
         sz_dec++;
+    }
+
+    typeof(dec_msg) tmp[_fec.cl];
+
+    if(_fec.enable_fulltail_biting)
+    {
+        memcpy(tmp, dec_msg + (sz_dec - (_fec.cl-1)), (_fec.cl-1));
+        memmove(dec_msg + (_fec.cl - 1), dec_msg, (sz_dec - (_fec.cl-1)));
+        memcpy(dec_msg, tmp, (_fec.cl-1));
     }
 
     free(metrics);

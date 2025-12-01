@@ -1,4 +1,6 @@
 #include "fec.h"
+#include "colors.h"
+#include "colordlg.h"
 #define CUR_FILE "ENCODE.C"
 
 size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
@@ -8,6 +10,10 @@ size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
     {
         printf("\n[%s][%d]: invalid input size(%d) to encode\n", CUR_FILE, __LINE__, sz_msg);
         return 0;
+    }
+    if(sz_msg % 8 != 0)
+    {
+        printf( REDB "raw msg size is not exact bytes. continuing anyway..!" reset "\n");
     }
 
     unsigned int state_reg = 0;
@@ -78,6 +84,7 @@ size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
             enc_msg[sz_enc++] = G0;
 
             state_reg = state_reg >> 1;
+            // printf("\nstate reg = %d", state_reg & full_state);
         }
     }
 

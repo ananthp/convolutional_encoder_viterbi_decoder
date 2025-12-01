@@ -13,4 +13,5 @@ how to build and run?
 -> Go to build directory if it is there. if not, create one as follows in the terminal
 -> cd build
 -> cmake ..
+-> make
 -> ./fec_test.exe
