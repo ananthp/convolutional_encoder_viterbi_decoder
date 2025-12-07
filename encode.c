@@ -88,5 +88,32 @@ size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
         }
     }
 
+    print_array(enc_msg, sz_enc, "encoded msg");    
+
+    if(_fec.sz_puncturing_pattern > 0)
+    {
+        // typeof(enc_msg) *tmp = calloc(sz_enc, sizeof(enc_msg[0]));
+        uint8_t *tmp = calloc(sz_enc, sizeof(enc_msg[0]));
+        size_t sz_out = 0;
+        for(int i = 0; i < sz_enc; i++)
+        {
+            bool puncture = !(_fec.puncturing_pattern[(i % _fec.sz_puncturing_pattern)]);
+
+            if(!puncture)
+            {
+                tmp[sz_out] = enc_msg[i];
+                enc_msg[sz_out] =  tmp[sz_out];
+                sz_out++;
+            }
+        }
+        
+        // memcpy(enc_msg, tmp, sz_out);
+        
+        sz_enc = sz_out;
+        
+        free(tmp);
+    }
+
+    print_array(enc_msg, sz_enc, "punctured msg");
     return sz_enc;
 }

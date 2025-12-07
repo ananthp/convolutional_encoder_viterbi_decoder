@@ -2,7 +2,7 @@
 #include "colors.h"
 #include <time.h>
 
-#define MAX_MSG_SIZE (8*1)
+#define MAX_MSG_SIZE (8*3)
 
 uint8_t msg[MAX_MSG_SIZE] = {0};
 size_t sz_msg = MAX_MSG_SIZE;
@@ -26,8 +26,11 @@ int main()
 {
     srand(time(NULL)); // Seed with current time
 
-    bool punc[4] = {1,1};
-    size_t sz_punc = 2;
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    
+    bool punc[10] = {1,1,1,0,0,1};
+    size_t sz_punc = 6;
 
     for(size_t i = 0; i < sz_msg; i++)
     {
@@ -79,7 +82,7 @@ int main()
     // enc[0] = !enc[0];
     // enc[sz_enc-1] = !enc[sz_enc-1];
     // enc[sz_enc-2] = !enc[sz_enc-2];
-    enc[sz_enc-3] = !enc[sz_enc-3];
+    // enc[sz_enc-3] = !enc[sz_enc-3];
 
     sz_dec = 0;
     sz_dec = decode(_fec, enc, sz_enc, dec);
