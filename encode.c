@@ -19,6 +19,9 @@ size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
     unsigned int state_reg = 0;
     unsigned int full_state = pow(2,_fec.cl-1) - 1;
 
+    uint8_t *enc_half_rate = calloc(sz_msg*2, sizeof(msg[0]));
+    unsigned int sz_enc_half_rate = 0;
+
     if(_fec.enable_fulltail_biting)
     {
         uint8_t temp[20] = {0};
@@ -42,8 +45,8 @@ size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
             ones_cnt = __builtin_popcount(state_reg & _fec.lsb);
             G0 = ones_cnt % 2;
 
-            enc_msg[sz_enc++] = G1;
-            enc_msg[sz_enc++] = G0;
+            enc_half_rate[sz_enc_half_rate++] = G1;
+            enc_half_rate[sz_enc_half_rate++] = G0;
 
             state_reg = state_reg >> 1;
         }
@@ -60,8 +63,8 @@ size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
             ones_cnt = __builtin_popcount(state_reg & _fec.lsb);
             G0 = ones_cnt % 2;
 
-            enc_msg[sz_enc++] = G1;
-            enc_msg[sz_enc++] = G0;
+            enc_half_rate[sz_enc_half_rate++] = G1;
+            enc_half_rate[sz_enc_half_rate++] = G0;
 
             state_reg = state_reg >> 1;
         }
@@ -80,40 +83,77 @@ size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
             ones_cnt = __builtin_popcount(state_reg & _fec.lsb);
             G0 = ones_cnt % 2;
 
-            enc_msg[sz_enc++] = G1;
-            enc_msg[sz_enc++] = G0;
+            enc_half_rate[sz_enc_half_rate++] = G1;
+            enc_half_rate[sz_enc_half_rate++] = G0;
 
             state_reg = state_reg >> 1;
             // printf("\nstate reg = %d", state_reg & full_state);
         }
     }
 
-    print_array(enc_msg, sz_enc, "encoded msg");    
+    print_array(enc_half_rate, sz_enc_half_rate, "encoded msg");    
 
+    uint8_t *repeated = NULL;
+    size_t sz_repeated = 0;
+    unsigned int n_repeats = (_fec.n_repeats > 0) ? _fec.n_repeats : 1;
+    repeated = calloc(sz_enc_half_rate*n_repeats, sizeof(enc_half_rate[0]));
+    if(_fec.n_repeats > 0)
+    {
+        for(int i = 0; i < sz_enc_half_rate; i = i+2)
+        {
+            for(int j = 0; j < _fec.n_repeats; j++)
+            {
+                repeated[sz_repeated++] = enc_half_rate[i];
+                repeated[sz_repeated++] = enc_half_rate[i+1];
+            }
+        }
+    }
+    else if(_fec.n_repeats == 0)
+    {
+        memcpy(repeated, enc_half_rate, sizeof(enc_half_rate[0])*sz_enc_half_rate);
+        sz_repeated = sz_enc_half_rate;
+    }
+    else
+    {
+        printf("\ninvalid n_repeats selected (%d)\n\n\n\n\n\n", n_repeats);
+        assert(false);
+    }
+
+    print_array(repeated, sz_repeated, "repeated enc msg");    
+
+    uint8_t *punctured = NULL;
+    punctured = calloc(sz_repeated, sizeof(repeated[0]));
+    size_t sz_punctured = 0;
     if(_fec.sz_puncturing_pattern > 0)
     {
-        // typeof(enc_msg) *tmp = calloc(sz_enc, sizeof(enc_msg[0]));
-        uint8_t *tmp = calloc(sz_enc, sizeof(enc_msg[0]));
-        size_t sz_out = 0;
-        for(int i = 0; i < sz_enc; i++)
+        for(int i = 0; i < sz_repeated; i++)
         {
             bool puncture = !(_fec.puncturing_pattern[(i % _fec.sz_puncturing_pattern)]);
 
             if(!puncture)
             {
-                tmp[sz_out] = enc_msg[i];
-                enc_msg[sz_out] =  tmp[sz_out];
-                sz_out++;
+                punctured[sz_punctured] = repeated[i];
+                // enc_msg[sz_punctured] =  punctured[sz_punctured];
+                sz_punctured++;
             }
-        }
-        
-        // memcpy(enc_msg, tmp, sz_out);
-        
-        sz_enc = sz_out;
-        
-        free(tmp);
+        }        
+    }
+    else
+    {
+        printf("\ninvalid puncturing sequence size (%d)\n\n\n\n\n\n", sz_punctured);
     }
 
+    sz_enc = sz_punctured;
+
+    memcpy(enc_msg, punctured, sizeof(punctured[0])*sz_punctured);
+
+    
+    
+    free(repeated);
+    free(punctured);
+    free(enc_half_rate);
+    
+    // print_array(enc_msg, sz_enc, "enc msg inside");    
     print_array(enc_msg, sz_enc, "punctured msg");
     return sz_enc;
 }

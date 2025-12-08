@@ -2,12 +2,12 @@
 #include "colors.h"
 #include <time.h>
 
-#define MAX_MSG_SIZE (8*3)
+#define MAX_MSG_SIZE (8*9*100)
 
 uint8_t msg[MAX_MSG_SIZE] = {0};
 size_t sz_msg = MAX_MSG_SIZE;
 
-uint8_t enc[MAX_MSG_SIZE*2] = {0};
+uint8_t enc[MAX_MSG_SIZE*12] = {0};
 size_t sz_enc = 0;
 
 uint8_t dec[MAX_MSG_SIZE] = {0};
@@ -26,14 +26,49 @@ int main()
 {
     srand(time(NULL)); // Seed with current time
 
+    // // 1/2, 1/4, 1/6, 1/8, 1/12, 1/16
     // bool punc[4] = {1,1};
     // size_t sz_punc = 2;
     
-    bool punc[10] = {1,1,1,0,0,1};
-    size_t sz_punc = 6;
+    // // 3/4
+    // bool punc[10] = {1,1,1,0,0,1};
+    // size_t sz_punc = 6;
 
+    // // 2/3, 1/3
     // bool punc[10] = {1,1,1,0};
     // size_t sz_punc = 4;
+
+    // // 9/10
+    // bool punc[18] = {1,1,1,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1};
+    // size_t sz_punc = 18;
+
+    // // 8/9
+    // bool punc[16] = {1,1,1,0,1,0,1,0,0,1,1,0,0,1,0,1};
+    // size_t sz_punc = 16;
+
+    // // 5/6
+    // bool punc[10] = {1,1,1,0,0,1,1,0,0,1};
+    // size_t sz_punc = 10;
+
+    // // 4/5
+    // bool punc[10] = {1,1,1,0,1,0,1,0};
+    // size_t sz_punc = 8;
+
+    // // 4/7
+    // bool punc[10] = {1,0,1,1,1,1,1,1};
+    // size_t sz_punc = 8;
+
+    // 9/16
+    bool punc[18] = {1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1};
+    size_t sz_punc = 18;
+
+    // // 2/5
+    // bool punc[10] = {1,1,1,0,1,1,0,0};
+    // size_t sz_punc = 8;
+
+    // // 2/7
+    // bool punc[10] = {1,0,1,1,1,1,1,1};
+    // size_t sz_punc = 8;
 
     for(size_t i = 0; i < sz_msg; i++)
     {
@@ -45,6 +80,7 @@ int main()
 
     /******************************************* A FEC configuraion test ****************************************** */
     FEC _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, false);
+    // FEC _fec = init_fec(7, 0133, 0171, 2, punc, sz_punc, false);
     print_fec(_fec);
 
     
@@ -53,10 +89,12 @@ int main()
 
     sz_enc = encode(_fec, msg, sz_msg, enc);
 
+    printf("\nenc msg size : %lld bits\n", sz_enc);
+
     // adding 1 error manually.
     // enc[1] = !enc[1];
 
-    // print_array(enc, sz_enc, "encoded data");
+    print_array(enc, sz_enc, "encoded data");
 
     sz_dec = decode(_fec, enc, sz_enc, dec);
     printf("\ndecoded msg size : %lld bits\n", sz_dec);
@@ -67,8 +105,9 @@ int main()
 
     
     /******************************************* A FEC configuraion test ****************************************** */
-    // _fec = init_fec(9, 0561, 0753, 0, punc, sz_punc, true);
-    _fec = init_fec(3, 05, 07, 0, punc, sz_punc, true);
+    _fec = init_fec(9, 0561, 0753, 0, punc, sz_punc, true);
+    // _fec = init_fec(3, 05, 07, 0, punc, sz_punc, true);
+    // _fec = init_fec(3, 05, 07, 2, punc, sz_punc, true);
     // _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, true);
 
     print_fec(_fec);
@@ -76,8 +115,11 @@ int main()
     print_array(msg, sz_msg, "raw msg");
 
     printf("\nraw msg size : %lld bits\n", sz_msg);
+    
     sz_enc = 0;
     sz_enc = encode(_fec, msg, sz_msg, enc);
+
+    printf("\nenc msg size : %lld bits\n", sz_enc);
 
     // print_array(enc, sz_enc, "encoded data");
 

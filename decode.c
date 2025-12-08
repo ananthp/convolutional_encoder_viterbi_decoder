@@ -1,6 +1,7 @@
 #include "fec.h"
 #define CUR_FILE "DECODER.C"
 
+#pragma pack(1)
 typedef struct node_info{
     unsigned int cur_state; // current state
     int error_at_cur_node; // latest and shortest error at current node will be in this node.
@@ -62,6 +63,15 @@ size_t depuncture(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *depunc
 /// @return 
 size_t decode(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *dec_msg);
 
+/// @brief removes n repeats added by the encoder to acheive repeated codes.
+/// @param _fec 
+/// @param n_repeated 
+/// @param sz_n_repeated 
+/// @param removed 
+/// @return 
+size_t n_repeats_remover(FEC _fec, uint8_t *n_repeated, unsigned int sz_n_repeated, uint8_t *removed);
+
+
 size_t decode(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *dec_msg)
 {
     // handling error cases for enc msg size.
@@ -76,15 +86,27 @@ size_t decode(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *dec_msg)
         return 0;
     }
 
+    print_array(enc_msg, sz_enc_msg, "encoded data to decode ");
+    
     uint8_t *depunctured = calloc(sz_enc_msg*2, sizeof(enc_msg[0]));
     size_t sz_depunctured = 0;
     sz_depunctured = depuncture(_fec, enc_msg, sz_enc_msg, depunctured);
 
-    print_array(depunctured, sz_depunctured, "depunctured data : ");
+    printf("\nsz_depunctured : %d\n", sz_depunctured);
 
-    size_t sz_decoded = perform_viterbi(_fec, depunctured, sz_depunctured, dec_msg);
+    print_array(depunctured, sz_depunctured, "depunctured data ");
+
+    uint8_t *n_removed = calloc(sz_enc_msg*2, sizeof(enc_msg[0]));
+    size_t sz_n_removed = 0;
+    sz_n_removed = n_repeats_remover(_fec, depunctured, sz_depunctured, n_removed);
+
+    print_array(n_removed, sz_n_removed, "removed repeated enc msg");    
+
+    size_t sz_decoded = perform_viterbi(_fec, n_removed, sz_n_removed, dec_msg);
 
     free(depunctured);
+    free(n_removed);
+
     return sz_decoded;
 }
 
@@ -96,11 +118,6 @@ size_t perform_viterbi(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *d
     if(sz_enc_msg <= 0)
     {
         printf("\n[%s][%d]: invalid input size(%d) to decode\n", CUR_FILE, __LINE__, sz_enc_msg);
-        return 0;
-    }
-    if(sz_enc_msg % _fec.ones_cnt_punc_pat != 0)
-    {
-        printf("\ninvalid input size to decoder function : %d expected %d\n", sz_enc_msg, ceil(sz_enc_msg / (float)_fec.ones_cnt_punc_pat)*_fec.ones_cnt_punc_pat);
         return 0;
     }
 
@@ -372,4 +389,50 @@ size_t depuncture(FEC _fec, uint8_t *enc_msg, size_t sz_enc_msg, uint8_t *depunc
     }
 
     return sz_depunctured;
+}
+
+size_t n_repeats_remover(FEC _fec, uint8_t *n_repeated, unsigned int sz_n_repeated, uint8_t *removed)
+{
+    size_t sz_removed = 0;
+    unsigned int n_repeats = (_fec.n_repeats > 0) ? _fec.n_repeats : 1;
+    if(sz_n_repeated % n_repeats != 0)
+    {
+        printf("\ninvalid input size to n repeats remover (%d) expected multiples of %d\n\n\n\n\n\n", sz_n_repeated, n_repeats);
+        return 0;
+    }
+    if(n_repeats > 0)
+    {
+        for(int i = 0; i < sz_n_repeated;)
+        {
+            float msb = 0.0, lsb = 0.0;
+            for(int j = 0; j < n_repeats; j++)
+            {
+                float m = (float)(bool)n_repeated[i++];
+                float l = (float)(bool)n_repeated[i++];
+
+                // printf("\n%f %f", m, l);
+
+                msb += m;
+                lsb += l;
+            }
+            uint8_t msb_r = ((msb/(float)n_repeats) >= 0.5) ? 1 : 0;
+            uint8_t lsb_r = ((lsb/(float)n_repeats) >= 0.5) ? 1 : 0;
+            removed[sz_removed++] = msb_r;
+            removed[sz_removed++] = lsb_r;
+        }
+    }
+    else if(n_repeats == 0)
+    {
+        memcpy(removed, n_repeated, sizeof(n_repeated[0])*sz_n_repeated);
+        sz_removed = sz_n_repeated;
+    }
+    else
+    {
+        printf("\ninvalid n_repeats selected (%d)\n\n\n\n\n\n", n_repeats);
+        assert(false);
+    }
+
+    return sz_removed;
+
+
 }
