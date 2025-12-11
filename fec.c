@@ -44,12 +44,13 @@ void print_fec(FEC _fec)
     }
     printf("] -> one's count : %d\n", _fec.ones_cnt_punc_pat);
     printf("pattern size : %d\n", _fec.sz_puncturing_pattern);
+    printf("code rate : %d/%d\n", _fec.sz_puncturing_pattern/2/(_fec.n_repeats > 0 ? _fec.n_repeats : 1),  _fec.ones_cnt_punc_pat);
 }
 
 void print_array(uint8_t *a, size_t b, const char *c)
 {
-    return;
     printf("\n%s : (%d)\n", c, b);
+    return;
     for(int i = 0; i < b; i++){
         if(i%32 == 0)
         printf("\n");

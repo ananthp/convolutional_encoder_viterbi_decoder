@@ -7,7 +7,7 @@
 uint8_t msg[MAX_MSG_SIZE] = {0};
 size_t sz_msg = MAX_MSG_SIZE;
 
-uint8_t enc[MAX_MSG_SIZE*12] = {0};
+uint8_t enc[MAX_MSG_SIZE*2*12] = {0};
 size_t sz_enc = 0;
 
 uint8_t dec[MAX_MSG_SIZE] = {0};
@@ -26,49 +26,209 @@ int main()
 {
     srand(time(NULL)); // Seed with current time
 
-    // // 1/2, 1/4, 1/6, 1/8, 1/12, 1/16
-    // bool punc[4] = {1,1};
-    // size_t sz_punc = 2;
-    
-    // // 3/4
-    // bool punc[10] = {1,1,1,0,0,1};
-    // size_t sz_punc = 6;
-
-    // // 2/3, 1/3
-    // bool punc[10] = {1,1,1,0};
-    // size_t sz_punc = 4;
-
     // // 9/10
     // bool punc[18] = {1,1,1,0,1,0,1,0,0,1,1,0,1,0,1,0,0,1};
     // size_t sz_punc = 18;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+
+    // // 9/10
+    // bool punc[18] = {1,1,1,0,1,0,0,1,0,1,0,1,1,0,0,1,1,0};
+    // size_t sz_punc = 18;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
 
     // // 8/9
     // bool punc[16] = {1,1,1,0,1,0,1,0,0,1,1,0,0,1,0,1};
     // size_t sz_punc = 16;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+
+    // 8/9
+    bool punc[16] = {1,1,1,0,1,0,0,1,0,1,0,1,0,1,0,1};
+    size_t sz_punc = 16;
+    unsigned int nrepeats = 0;
+    unsigned int cl = 9;
 
     // // 5/6
     // bool punc[10] = {1,1,1,0,0,1,1,0,0,1};
     // size_t sz_punc = 10;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+
+    // // 5/6
+    // bool punc[10] = {1,1,0,1,1,0,1,0,0,1};
+    // size_t sz_punc = 10;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
 
     // // 4/5
     // bool punc[10] = {1,1,1,0,1,0,1,0};
     // size_t sz_punc = 8;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+
+    // // 4/5
+    // bool punc[10] = {1,1,1,0,0,1,1,0};
+    // size_t sz_punc = 8;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
+
+    // // 3/4
+    // bool punc[10] = {1,1,1,0,0,1};
+    // size_t sz_punc = 6;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+    
+    // // 3/4
+    // bool punc[10] = {1,1,1,0,1,0};
+    // size_t sz_punc = 6;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
+
+    // // 2/3
+    // bool punc[10] = {1,1,1,0};
+    // size_t sz_punc = 4;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+    
+    // // 2/3
+    // bool punc[10] = {1,1,1,0};
+    // size_t sz_punc = 4;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
+
+    // // 1/3
+    // bool punc[10] = {1,1,1,0};
+    // size_t sz_punc = 4;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 7;
+    
+    // // 1/3
+    // bool punc[10] = {1,1,1,0};
+    // size_t sz_punc = 4;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 9;
 
     // // 4/7
     // bool punc[10] = {1,0,1,1,1,1,1,1};
     // size_t sz_punc = 8;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
 
-    // 9/16
-    bool punc[18] = {1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1};
-    size_t sz_punc = 18;
+    // // 4/7
+    // bool punc[10] = {1,0,1,1,1,1,1,1};
+    // size_t sz_punc = 8;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
+
+    // // 9/16
+    // bool punc[18] = {1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1};
+    // size_t sz_punc = 18;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+
+    // // 9/16
+    // bool punc[18] = {1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1};
+    // size_t sz_punc = 18;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
+
+    // // 1/2
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 7;
+
+    // // 1/2
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 0;
+    // unsigned int cl = 9;
+    
+    // // 1/4
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 7;
+    
+    // // 1/4
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 9;
+    
+    // // 1/6
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 3;
+    // unsigned int cl = 7;
+    
+    // // 1/6
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 3;
+    // unsigned int cl = 9;
+    
+    // // 1/8
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 4;
+    // unsigned int cl = 7;
+    
+    // // 1/8
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 4;
+    // unsigned int cl = 9;
+    
+    // // 1/12
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 6;
+    // unsigned int cl = 7;
+    
+    // // 1/12
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 6;
+    // unsigned int cl = 9;
+    
+    // // 1/16
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 8;
+    // unsigned int cl = 7;
+
+    // // 1/16
+    // bool punc[4] = {1,1};
+    // size_t sz_punc = 2;
+    // unsigned int nrepeats = 8;
+    // unsigned int cl = 9;
 
     // // 2/5
     // bool punc[10] = {1,1,1,0,1,1,0,0};
     // size_t sz_punc = 8;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 7;
+
+    // // 2/5
+    // bool punc[10] = {1,1,1,0,1,1,0,0};
+    // size_t sz_punc = 8;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 9;
 
     // // 2/7
     // bool punc[10] = {1,0,1,1,1,1,1,1};
     // size_t sz_punc = 8;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 7;
+
+    // // 2/7
+    // bool punc[10] = {1,0,1,1,1,1,1,1};
+    // size_t sz_punc = 8;
+    // unsigned int nrepeats = 2;
+    // unsigned int cl = 9;
 
     for(size_t i = 0; i < sz_msg; i++)
     {
@@ -79,7 +239,15 @@ int main()
 
 
     /******************************************* A FEC configuraion test ****************************************** */
-    FEC _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, false);
+    FEC _fec;
+    if (cl == 7)
+    {
+        _fec = init_fec(cl, 0133, 0171, nrepeats, punc, sz_punc, false);
+    }
+    else
+    {
+        _fec = init_fec(cl, 0561, 0753, nrepeats, punc, sz_punc, true);
+    }
     // FEC _fec = init_fec(7, 0133, 0171, 2, punc, sz_punc, false);
     print_fec(_fec);
 
@@ -105,37 +273,37 @@ int main()
 
     
     /******************************************* A FEC configuraion test ****************************************** */
-    _fec = init_fec(9, 0561, 0753, 0, punc, sz_punc, true);
-    // _fec = init_fec(3, 05, 07, 0, punc, sz_punc, true);
-    // _fec = init_fec(3, 05, 07, 2, punc, sz_punc, true);
-    // _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, true);
+    // _fec = init_fec(cl, 0561, 0753, nrepeats, punc, sz_punc, true);
+    // // _fec = init_fec(3, 05, 07, 0, punc, sz_punc, true);
+    // // _fec = init_fec(3, 05, 07, 2, punc, sz_punc, true);
+    // // _fec = init_fec(7, 0133, 0171, 0, punc, sz_punc, true);
 
-    print_fec(_fec);
+    // print_fec(_fec);
 
-    print_array(msg, sz_msg, "raw msg");
+    // print_array(msg, sz_msg, "raw msg");
 
-    printf("\nraw msg size : %lld bits\n", sz_msg);
+    // printf("\nraw msg size : %lld bits\n", sz_msg);
     
-    sz_enc = 0;
-    sz_enc = encode(_fec, msg, sz_msg, enc);
+    // sz_enc = 0;
+    // sz_enc = encode(_fec, msg, sz_msg, enc);
 
-    printf("\nenc msg size : %lld bits\n", sz_enc);
+    // printf("\nenc msg size : %lld bits\n", sz_enc);
 
-    // print_array(enc, sz_enc, "encoded data");
+    // // print_array(enc, sz_enc, "encoded data");
 
-    // adding 1 error manually.
-    // enc[0] = !enc[0];
-    // enc[sz_enc-1] = !enc[sz_enc-1];
-    // enc[sz_enc-2] = !enc[sz_enc-2];
-    // enc[sz_enc-3] = !enc[sz_enc-3];
+    // // adding 1 error manually.
+    // // enc[0] = !enc[0];
+    // // enc[sz_enc-1] = !enc[sz_enc-1];
+    // // enc[sz_enc-2] = !enc[sz_enc-2];
+    // // enc[sz_enc-3] = !enc[sz_enc-3];
 
-    sz_dec = 0;
-    sz_dec = decode(_fec, enc, sz_enc, dec);
-    printf("\ndecoded msg size : %lld bits\n", sz_dec);
+    // sz_dec = 0;
+    // sz_dec = decode(_fec, enc, sz_enc, dec);
+    // printf("\ndecoded msg size : %lld bits\n", sz_dec);
 
-    print_array(dec, sz_dec, "decoded msg : ");
+    // print_array(dec, sz_dec, "decoded msg : ");
 
-    validate_data(msg, sz_msg, dec, sz_dec);
+    // validate_data(msg, sz_msg, dec, sz_dec);
 
     /******************************************* A FEC configuraion test ****************************************** */
 
