@@ -1,6 +1,5 @@
 #include "fec.h"
 #include "colors.h"
-#include "colordlg.h"
 #define CUR_FILE "ENCODE.C"
 
 size_t encode(FEC _fec, uint8_t *msg, size_t sz_msg, uint8_t *enc_msg)
